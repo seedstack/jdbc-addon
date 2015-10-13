@@ -41,12 +41,10 @@
                         <includedLicenses>
                             <includedLicense>Apache 2</includedLicense>
                             <includedLicense>BSD</includedLicense>
-                            <includedLicense>EPL 1.0</includedLicense>
                             <includedLicense>LGPL 2.1</includedLicense>
                             <includedLicense>LGPL 3.0</includedLicense>
                             <includedLicense>MIT License</includedLicense>
                             <includedLicense>MPL 2.0</includedLicense>
-                            <includedLicense>The JSON License</includedLicense>
                             <includedLicense>Public Domain</includedLicense>
                             <includedLicense>WTFPL</includedLicense>
 
@@ -58,11 +56,11 @@
                             <licenseMerge>Apache 2|The Apache Software License, Version 2.0</licenseMerge>
                             <licenseMerge>Apache 2|Apache License 2.0</licenseMerge>
                             <licenseMerge>BSD|The New BSD License</licenseMerge>
-                            <licenseMerge>EPL 1.0|Eclipse Public License, Version 1.0</licenseMerge>
                             <licenseMerge>LGPL 2.1|GNU Lesser General Public License, Version 2.1</licenseMerge>
                             <licenseMerge>LGPL 3.0|GNU Lesser Public License</licenseMerge>
+
                             <licenseMerge>IGNORED_LICENSE|MPL 1.1</licenseMerge>
-                            <licenseMerge>IGNORED_LICENSE|LGPL 2.1</licenseMerge>
+                            <licenseMerge>IGNORED_LICENSE|Eclipse Public License, Version 1.0</licenseMerge>
                         </licenseMerges>
                     </configuration>
                 </plugin>
