@@ -12,7 +12,7 @@ menu:
 
 Seed JDBC persistence add-on enables your application to interface with any relational database through the JDBC API. 
 
-{{< dependency "org.seedstack.addons.jdbc" "jdbc" >}}
+{{< dependency g="org.seedstack.addons.jdbc" a="jdbc" >}}
 
 # Configuration
 
