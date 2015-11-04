@@ -8,7 +8,7 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc;
+package org.seedstack.jdbc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,8 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.seedstack.seed.it.SeedITRunner;
-import org.seedstack.seed.persistence.jdbc.api.Jdbc;
-import org.seedstack.seed.persistence.jdbc.sample.Repository;
+import org.seedstack.jdbc.sample.Repository;
 import org.seedstack.seed.transaction.Transactional;
 
 @RunWith(SeedITRunner.class)

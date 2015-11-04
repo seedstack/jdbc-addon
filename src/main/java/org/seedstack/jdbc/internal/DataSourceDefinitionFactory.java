@@ -5,15 +5,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-package org.seedstack.seed.persistence.jdbc.internal;
+package org.seedstack.jdbc.internal;
 
 import io.nuun.kernel.api.plugin.PluginException;
 import org.apache.commons.configuration.Configuration;
+import org.seedstack.jdbc.JdbcExceptionHandler;
+import org.seedstack.jdbc.internal.datasource.PlainDataSourceProvider;
+import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.SeedException;
-import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
-import org.seedstack.seed.persistence.jdbc.api.JdbcExceptionHandler;
-import org.seedstack.seed.persistence.jdbc.internal.datasource.PlainDataSourceProvider;
-import org.seedstack.seed.persistence.jdbc.spi.DataSourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

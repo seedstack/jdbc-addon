@@ -8,7 +8,7 @@
 /*
  * Creation : 19 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.sample;
+package org.seedstack.jdbc.sample;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,8 +18,8 @@ import java.sql.Statement;
 
 import javax.inject.Inject;
 
+import org.seedstack.jdbc.Jdbc;
 import org.seedstack.seed.it.ITBind;
-import org.seedstack.seed.persistence.jdbc.api.Jdbc;
 import org.seedstack.seed.transaction.Propagation;
 import org.seedstack.seed.transaction.Transactional;
 

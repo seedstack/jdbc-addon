@@ -8,10 +8,10 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal.datasource;
+package org.seedstack.jdbc.internal.datasource;
 
 import org.seedstack.seed.SeedException;
-import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
+import org.seedstack.jdbc.internal.JdbcErrorCode;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;

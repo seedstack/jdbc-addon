@@ -8,7 +8,7 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.api;
+package org.seedstack.jdbc;
 
 import org.seedstack.seed.transaction.spi.ExceptionHandler;
 import org.seedstack.seed.transaction.spi.TransactionMetadata;

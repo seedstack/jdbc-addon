@@ -8,14 +8,14 @@
 /*
  * Creation : 17 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal;
+package org.seedstack.jdbc.internal;
 
 import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
-import org.seedstack.seed.persistence.jdbc.api.JdbcExceptionHandler;
+import org.seedstack.jdbc.JdbcExceptionHandler;
 import org.seedstack.seed.transaction.spi.TransactionalProxy;
 
 import java.sql.Connection;

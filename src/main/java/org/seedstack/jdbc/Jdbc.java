@@ -8,7 +8,7 @@
 /*
  * Creation : 17 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.api;
+package org.seedstack.jdbc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

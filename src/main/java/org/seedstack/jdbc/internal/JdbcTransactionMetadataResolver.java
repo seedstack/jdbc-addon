@@ -8,12 +8,12 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal;
+package org.seedstack.jdbc.internal;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.seedstack.jdbc.Jdbc;
+import org.seedstack.jdbc.JdbcExceptionHandler;
 import org.seedstack.seed.core.utils.SeedReflectionUtils;
-import org.seedstack.seed.persistence.jdbc.api.Jdbc;
-import org.seedstack.seed.persistence.jdbc.api.JdbcExceptionHandler;
 import org.seedstack.seed.transaction.spi.TransactionMetadata;
 import org.seedstack.seed.transaction.spi.TransactionMetadataResolver;
 

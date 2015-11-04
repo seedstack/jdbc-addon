@@ -8,7 +8,7 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.spi;
+package org.seedstack.jdbc.spi;
 
 import javax.sql.DataSource;
 import java.util.Properties;

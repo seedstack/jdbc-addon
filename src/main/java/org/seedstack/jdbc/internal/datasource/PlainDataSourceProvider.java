@@ -8,9 +8,9 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal.datasource;
+package org.seedstack.jdbc.internal.datasource;
 
-import org.seedstack.seed.persistence.jdbc.spi.DataSourceProvider;
+import org.seedstack.jdbc.spi.DataSourceProvider;
 
 import javax.sql.DataSource;
 import java.util.Properties;

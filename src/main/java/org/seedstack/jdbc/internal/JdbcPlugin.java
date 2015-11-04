@@ -8,7 +8,7 @@
 /*
  * Creation : 17 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal;
+package org.seedstack.jdbc.internal;
 
 import io.nuun.kernel.api.Plugin;
 import io.nuun.kernel.api.plugin.InitState;
@@ -17,9 +17,9 @@ import io.nuun.kernel.api.plugin.context.InitContext;
 import io.nuun.kernel.api.plugin.request.ClasspathScanRequest;
 import io.nuun.kernel.core.AbstractPlugin;
 import org.apache.commons.configuration.Configuration;
+import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.core.internal.application.ApplicationPlugin;
 import org.seedstack.seed.core.internal.jndi.JndiPlugin;
-import org.seedstack.seed.persistence.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.transaction.internal.TransactionPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import java.util.Map;
  * JDBC support plugin
  */
 public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
-    public static final String JDBC_PLUGIN_CONFIGURATION_PREFIX = "org.seedstack.seed.persistence.jdbc";
+    public static final String JDBC_PLUGIN_CONFIGURATION_PREFIX = "org.seedstack.jdbc";
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPlugin.class);
 
     private Map<String, DataSourceDefinition> dataSourceDefinitions;
@@ -43,7 +43,7 @@ public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
 
     @Override
     public String name() {
-        return "seed-persistence-jdbc-plugin";
+        return "jdbc";
     }
 
     @SuppressWarnings("unchecked")

@@ -8,11 +8,10 @@
 /*
  * Creation : 17 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal;
+package org.seedstack.jdbc.internal;
 
 import org.seedstack.seed.SeedException;
-import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
-import org.seedstack.seed.persistence.jdbc.api.JdbcTransaction;
+import org.seedstack.jdbc.JdbcTransaction;
 import org.seedstack.seed.transaction.spi.TransactionHandler;
 import org.seedstack.seed.transaction.spi.TransactionMetadata;
 

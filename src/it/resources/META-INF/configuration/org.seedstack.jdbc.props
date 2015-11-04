@@ -6,10 +6,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
-[org.seedstack.seed.persistence.jdbc]
+[org.seedstack.jdbc]
 datasources = datasource1
 
-[org.seedstack.seed.persistence.jdbc.datasource.datasource1]
+[org.seedstack.jdbc.datasource.datasource1]
 provider = HikariDataSourceProvider
 driver = org.hsqldb.jdbcDriver
 url = jdbc:hsqldb:mem:testdb1

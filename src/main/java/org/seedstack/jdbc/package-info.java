@@ -6,8 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 /**
- * Provides classes extending the JDBC support.
+ * Provides Seed classes facilitating the usage of JDBC.
  *
  * @author Pierre Thirouin
  */
-package org.seedstack.seed.persistence.jdbc.spi;
+package org.seedstack.jdbc;

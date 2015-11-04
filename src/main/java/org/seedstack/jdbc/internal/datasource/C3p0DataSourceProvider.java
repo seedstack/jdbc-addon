@@ -8,12 +8,12 @@
 /*
  * Creation : 18 févr. 2015
  */
-package org.seedstack.seed.persistence.jdbc.internal.datasource;
+package org.seedstack.jdbc.internal.datasource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.seedstack.seed.SeedException;
-import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
-import org.seedstack.seed.persistence.jdbc.spi.DataSourceProvider;
+import org.seedstack.jdbc.internal.JdbcErrorCode;
+import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
