@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.seedstack.seed.it.SeedITRunner;
 import org.seedstack.seed.persistence.jdbc.api.Jdbc;
 import org.seedstack.seed.persistence.jdbc.sample.Repository;
-import org.seedstack.seed.transaction.api.Transactional;
+import org.seedstack.seed.transaction.Transactional;
 
 @RunWith(SeedITRunner.class)
 @NotThreadSafe

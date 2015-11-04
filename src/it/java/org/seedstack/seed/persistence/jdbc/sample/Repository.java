@@ -18,10 +18,10 @@ import java.sql.Statement;
 
 import javax.inject.Inject;
 
-import org.seedstack.seed.it.api.ITBind;
+import org.seedstack.seed.it.ITBind;
 import org.seedstack.seed.persistence.jdbc.api.Jdbc;
-import org.seedstack.seed.transaction.api.Propagation;
-import org.seedstack.seed.transaction.api.Transactional;
+import org.seedstack.seed.transaction.Propagation;
+import org.seedstack.seed.transaction.Transactional;
 
 @ITBind
 public class Repository {

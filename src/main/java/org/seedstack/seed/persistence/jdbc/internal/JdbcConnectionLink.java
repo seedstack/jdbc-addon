@@ -10,7 +10,7 @@
  */
 package org.seedstack.seed.persistence.jdbc.internal;
 
-import org.seedstack.seed.core.api.SeedException;
+import org.seedstack.seed.SeedException;
 import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
 import org.seedstack.seed.persistence.jdbc.api.JdbcTransaction;
 import org.seedstack.seed.transaction.spi.TransactionalLink;

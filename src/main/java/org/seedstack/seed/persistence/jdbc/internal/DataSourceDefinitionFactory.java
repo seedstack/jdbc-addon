@@ -9,7 +9,7 @@ package org.seedstack.seed.persistence.jdbc.internal;
 
 import io.nuun.kernel.api.plugin.PluginException;
 import org.apache.commons.configuration.Configuration;
-import org.seedstack.seed.core.api.SeedException;
+import org.seedstack.seed.SeedException;
 import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
 import org.seedstack.seed.persistence.jdbc.api.JdbcExceptionHandler;
 import org.seedstack.seed.persistence.jdbc.internal.datasource.PlainDataSourceProvider;

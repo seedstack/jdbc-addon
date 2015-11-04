@@ -16,7 +16,7 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 import org.seedstack.seed.persistence.jdbc.api.JdbcExceptionHandler;
-import org.seedstack.seed.transaction.utils.TransactionalProxy;
+import org.seedstack.seed.transaction.spi.TransactionalProxy;
 
 import java.sql.Connection;
 import java.util.Map;

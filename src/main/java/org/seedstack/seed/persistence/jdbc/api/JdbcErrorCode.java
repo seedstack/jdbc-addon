@@ -10,7 +10,7 @@
  */
 package org.seedstack.seed.persistence.jdbc.api;
 
-import org.seedstack.seed.core.api.ErrorCode;
+import org.seedstack.seed.ErrorCode;
 
 /**
  * JDBC Error codes

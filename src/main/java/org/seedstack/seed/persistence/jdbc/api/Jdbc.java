@@ -17,7 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation accompanies the {@link org.seedstack.seed.transaction.api.Transactional} annotation to define the transaction as a JDBC one and
+ * This annotation accompanies the {@link org.seedstack.seed.transaction.Transactional} annotation to define the transaction as a JDBC one and
  * specify the concerned JDBC datasource.
  * 
  * @author yves.dautremay@mpsa.com

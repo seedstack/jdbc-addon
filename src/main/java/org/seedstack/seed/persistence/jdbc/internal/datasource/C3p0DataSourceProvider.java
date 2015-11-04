@@ -11,7 +11,7 @@
 package org.seedstack.seed.persistence.jdbc.internal.datasource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.seedstack.seed.core.api.SeedException;
+import org.seedstack.seed.SeedException;
 import org.seedstack.seed.persistence.jdbc.api.JdbcErrorCode;
 import org.seedstack.seed.persistence.jdbc.spi.DataSourceProvider;
 import org.slf4j.Logger;
