@@ -12,24 +12,19 @@ menu:
 
 Seed JDBC persistence add-on enables your application to interface with any relational database through the JDBC API. 
 
-To add the JDBC persistence add-on to your project, use the following Maven dependency:
- 
-    <dependency>
-      <groupId>org.seedstack.addons</groupId>
-      <artifactId>jdbc</artifactId>
-    </dependency>
+{{< dependency "org.seedstack.addons.jdbc" "jdbc" >}}
 
 # Configuration
 
 You can configure the add-on in one or more of your \*.props files. Declare you list of data source names you will be 
 configuring later:
 
-    org.seedstack.seed.persistence.jdbc.datasources = datasource1, datasource2, ...
+    org.seedstack.jdbc.datasources = datasource1, datasource2, ...
     
 Configure each data source separately. Notice the use of the keyword *property* to specify any property that will be 
 used by the datasource as specific configuration.
 
-    [org.seedstack.seed.persistence.jdbc.datasource.datasource1]
+    [org.seedstack.jdbc.datasource.datasource1]
     provider = HikariDataSourceProvider
     driver = org.hsqldb.jdbcDriver
     url = jdbc:hsqldb:mem:testdb1
@@ -40,7 +35,7 @@ used by the datasource as specific configuration.
 
 If your app server declares a JNDI datasource:
 
-    [org.seedstack.seed.persistence.jdbc.datasource.datasource2]
+    [org.seedstack.jdbc.datasource.datasource2]
     jndi-name = java:comp/env/jdbc/my-datasource
     context = ...
     
@@ -101,9 +96,9 @@ configuration. Three DataSource providers are currently supported out-of-the-box
 * [Commons DBCP](http://commons.apache.org/proper/commons-dbcp/) with `DbcpDataSourceProvider`
 * [C3P0](http://www.mchange.com/projects/c3p0/) with `C3p0DataSourceProvider`
 
-We also provide a test oriented DataSource that gives connection directly from the driver. Use `PlainDataSourceProvider` 
+We also provide a test oriented DataSource that gives connection directly from the driver. Use `PlainDataSourceProvider`
 or do not specify a provider. In case you want to use another data source, you can create your own `DataSourceProvider` 
-by implementing the `DataSourceProvider` interface:
+by implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
 
     public class SomeDataSourceProvider implements DataSourceProvider {
     
