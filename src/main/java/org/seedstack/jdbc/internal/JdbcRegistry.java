@@ -7,6 +7,8 @@
  */
 package org.seedstack.jdbc.internal;
 
+import io.nuun.kernel.api.annotations.Facet;
+
 import javax.sql.DataSource;
 
 /**
@@ -14,15 +16,16 @@ import javax.sql.DataSource;
  *
  * @author pierre.thirouin@ext.mpsa.com (Pierre Thirouin)
  */
+@Facet
 public interface JdbcRegistry {
 
     /**
      * This method allows to automatically use a data source for the given class when it asks for the injection of a connection.
      *
      * @param dataSourceName the dataSource to use
-     * @param clazz          the class requiring a connection
+     * @param aClass          the class requiring a connection
      */
-    void registerDataSourceForClass(Class<?> clazz, String dataSourceName);
+    void registerDataSourceForClass(Class<?> aClass, String dataSourceName);
 
     /**
      * Provides a configured data source by its name.

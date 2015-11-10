@@ -33,6 +33,7 @@ import java.util.Map;
  * JDBC support plugin
  */
 public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
+
     public static final String JDBC_PLUGIN_CONFIGURATION_PREFIX = "org.seedstack.jdbc";
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPlugin.class);
 
@@ -103,13 +104,13 @@ public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
     }
 
     @Override
-    public void registerDataSourceForClass(Class<?> clazz, String dataSourceName) {
+    public void registerDataSourceForClass(Class<?> aClass, String dataSourceName) {
         if (!dataSourceDefinitions.containsKey(dataSourceName)) {
             throw new PluginException("DataSource [" + dataSourceName
                     + "] Does not exist. Make sure it corresponds to a DataSource declared under configuration " + JDBC_PLUGIN_CONFIGURATION_PREFIX
                     + ".datasources");
         }
-        registeredClasses.put(clazz, dataSourceName);
+        registeredClasses.put(aClass, dataSourceName);
     }
 
     @Override
