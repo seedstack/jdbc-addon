@@ -10,7 +10,7 @@
  */
 package org.seedstack.jdbc.internal;
 
-import io.nuun.kernel.api.Plugin;
+import com.google.common.collect.Lists;
 import io.nuun.kernel.api.plugin.InitState;
 import io.nuun.kernel.api.plugin.PluginException;
 import io.nuun.kernel.api.plugin.context.InitContext;
@@ -18,14 +18,13 @@ import io.nuun.kernel.api.plugin.request.ClasspathScanRequest;
 import io.nuun.kernel.core.AbstractPlugin;
 import org.apache.commons.configuration.Configuration;
 import org.seedstack.jdbc.spi.DataSourceProvider;
-import org.seedstack.seed.core.internal.application.ApplicationPlugin;
 import org.seedstack.seed.core.internal.jndi.JndiPlugin;
+import org.seedstack.seed.core.spi.configuration.ConfigurationProvider;
 import org.seedstack.seed.transaction.internal.TransactionPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,24 +48,13 @@ public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
     @SuppressWarnings("unchecked")
     @Override
     public InitState init(InitContext initContext) {
-        Configuration jdbcConfiguration = null;
-        TransactionPlugin transactionPlugin = null;
-        JndiPlugin jndiPlugin = null;
-        for (Plugin plugin : initContext.pluginsRequired()) {
-            if (plugin instanceof ApplicationPlugin) {
-                jdbcConfiguration = ((ApplicationPlugin) plugin).getApplication().getConfiguration().subset(JDBC_PLUGIN_CONFIGURATION_PREFIX);
-            } else if (plugin instanceof TransactionPlugin) {
-                transactionPlugin = ((TransactionPlugin) plugin);
-            } else if (plugin instanceof JndiPlugin) {
-                jndiPlugin = ((JndiPlugin) plugin);
-            }
-        }
+        Configuration jdbcConfiguration = initContext.dependency(ConfigurationProvider.class)
+                .getConfiguration().subset(JDBC_PLUGIN_CONFIGURATION_PREFIX);
+        TransactionPlugin transactionPlugin = initContext.dependency(TransactionPlugin.class);
+        JndiPlugin jndiPlugin = initContext.dependency(JndiPlugin.class);
 
-        if (jdbcConfiguration == null || transactionPlugin == null || jndiPlugin == null) {
-            throw new PluginException("Unsatisfied plugin dependencies, ApplicationPlugin, TransactionPlugin and JndiPlugin are required");
-        }
-
-        Collection<Class<?>> dataSourceProviderClasses = initContext.scannedSubTypesByParentClass().get(DataSourceProvider.class);
+        Collection<Class<?>> dataSourceProviderClasses = initContext.scannedSubTypesByParentClass()
+                .get(DataSourceProvider.class);
 
         dataSourceDefinitions = new DataSourceDefinitionFactory(jdbcConfiguration)
                 .createDataSourceDefinitions(jndiPlugin.getJndiContexts(), dataSourceProviderClasses);
@@ -100,12 +88,8 @@ public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
     }
 
     @Override
-    public Collection<Class<? extends Plugin>> requiredPlugins() {
-        Collection<Class<? extends Plugin>> plugins = new ArrayList<Class<? extends Plugin>>();
-        plugins.add(ApplicationPlugin.class);
-        plugins.add(TransactionPlugin.class);
-        plugins.add(JndiPlugin.class);
-        return plugins;
+    public Collection<Class<?>> requiredPlugins() {
+        return Lists.<Class<?>>newArrayList(ConfigurationProvider.class, TransactionPlugin.class, JndiPlugin.class);
     }
 
     @Override
