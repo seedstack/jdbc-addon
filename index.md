@@ -4,7 +4,8 @@ addon: "JDBC"
 repo: "https://github.com/seedstack/jdbc-addon"
 author: "SeedStack"
 description: "Provides configuration, injection and transactions for JDBC datasources."
-min-version: "15.7+"
+min-version: "15.11+"
+backend: true
 menu:
     AddonJDBC:
         weight: 10
