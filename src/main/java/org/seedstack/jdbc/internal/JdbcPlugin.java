@@ -18,6 +18,7 @@ import io.nuun.kernel.api.plugin.request.ClasspathScanRequest;
 import io.nuun.kernel.core.AbstractPlugin;
 import org.apache.commons.configuration.Configuration;
 import org.seedstack.jdbc.spi.DataSourceProvider;
+import org.seedstack.jdbc.spi.JdbcRegistry;
 import org.seedstack.seed.core.internal.jndi.JndiPlugin;
 import org.seedstack.seed.core.spi.configuration.ConfigurationProvider;
 import org.seedstack.seed.transaction.internal.TransactionPlugin;
