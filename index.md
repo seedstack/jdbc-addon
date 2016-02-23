@@ -1,11 +1,19 @@
 ---
-title: "Overview"
-addon: "JDBC"
+title: "Basics"
+name: "JDBC"
 repo: "https://github.com/seedstack/jdbc-addon"
 author: "SeedStack"
 description: "Provides configuration, injection and transactions for JDBC datasources."
 min-version: "15.11+"
 backend: true
+weight: -1
+tags:
+    - "persistence"
+    - "jdbc"
+    - "data"
+    - "database"
+zones:
+    - Addons
 menu:
     AddonJDBC:
         weight: 10
