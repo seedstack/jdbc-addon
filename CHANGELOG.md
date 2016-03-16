@@ -1,3 +1,7 @@
+# Version 2.1.3 (?)
+
+* [chg] Update to Seed dependency to 2.3.0
+
 # Version 2.1.2 (2016-01-21)
 
 * [fix] Errors message were referencing outdated information.
