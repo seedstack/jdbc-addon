@@ -1,6 +1,6 @@
 # Version 2.1.3 (?)
 
-* [chg] Update to Seed dependency to 2.3.0
+* [chg] Update for SeedStack 16.4
 
 # Version 2.1.2 (2016-01-21)
 
