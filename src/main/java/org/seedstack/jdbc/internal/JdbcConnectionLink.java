@@ -57,7 +57,12 @@ class JdbcConnectionLink implements TransactionalLink<Connection> {
     }
 
     JdbcTransaction pop() {
-        return perThreadObjectContainer.get().pop();
+        Deque<JdbcTransaction> jdbcTransactions = perThreadObjectContainer.get();
+        JdbcTransaction jdbcTransaction = jdbcTransactions.pop();
+        if (jdbcTransactions.isEmpty()) {
+            perThreadObjectContainer.remove();
+        }
+        return jdbcTransaction;
     }
 
     boolean isLastTransaction() {
