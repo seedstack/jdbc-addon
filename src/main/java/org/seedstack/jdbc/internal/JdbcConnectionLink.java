@@ -15,6 +15,7 @@ import org.seedstack.seed.SeedException;
 import org.seedstack.seed.transaction.spi.TransactionalLink;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -56,16 +57,16 @@ class JdbcConnectionLink implements TransactionalLink<Connection> {
         perThreadObjectContainer.get().push(transaction);
     }
 
-    JdbcTransaction pop() {
+    JdbcTransaction pop() throws SQLException {
         Deque<JdbcTransaction> jdbcTransactions = perThreadObjectContainer.get();
         JdbcTransaction jdbcTransaction = jdbcTransactions.pop();
         if (jdbcTransactions.isEmpty()) {
-            perThreadObjectContainer.remove();
+            try {
+                jdbcTransaction.getConnection().close();
+            } finally {
+                perThreadObjectContainer.remove();
+            }
         }
         return jdbcTransaction;
-    }
-
-    boolean isLastTransaction() {
-        return perThreadObjectContainer.get().size() == 1;
     }
 }

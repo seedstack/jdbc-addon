@@ -10,8 +10,8 @@
  */
 package org.seedstack.jdbc.internal;
 
-import org.seedstack.seed.SeedException;
 import org.seedstack.jdbc.JdbcTransaction;
+import org.seedstack.seed.SeedException;
 import org.seedstack.seed.transaction.spi.TransactionHandler;
 import org.seedstack.seed.transaction.spi.TransactionMetadata;
 
@@ -31,9 +31,9 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
 
     /**
      * Constructor
-     * 
+     *
      * @param jdbcConnectionLink jdbc link for the connection
-     * @param dataSource the datasource to use when needing a new connection
+     * @param dataSource         the datasource to use when needing a new connection
      */
     JdbcTransactionHandler(JdbcConnectionLink jdbcConnectionLink, DataSource dataSource) {
         this.dataSource = dataSource;
@@ -105,11 +105,7 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
     @Override
     public void doCleanup() {
         try {
-            if (jdbcConnectionLink.isLastTransaction()) {
-                jdbcConnectionLink.pop().getConnection().close();
-            } else {
-                jdbcConnectionLink.pop();
-            }
+            jdbcConnectionLink.pop();
         } catch (SQLException e) {
             throw SeedException.wrap(e, JdbcErrorCode.JDBC_CLOSE_EXCEPTION);
         }
