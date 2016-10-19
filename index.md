@@ -42,16 +42,16 @@ used by the datasource as specific configuration.
     property.specific.jdbc.prop = value
     property.prop.for.datasource = value
 
-If your app server declares a JNDI datasource:
+Alternatively, if you want to lookup the data source through JNDI you can use this configuration:
 
-    [org.seedstack.jdbc.datasource.datasource2]
+    [org.seedstack.jdbc.datasource.datasource1]
     jndi-name = java:comp/env/jdbc/my-datasource
     context = ...
     
 The `context` property is optional and can be used to specify a particular context name configured in 
-[core support](/docs/seed/manual/core/jndi) to make the lookup. Otherwise the default context will be used.
+[core support](/docs/seed/manual/core/jndi) to make the lookup. Otherwise the default context (named `default`) will be used.
     
-# JDBC Connection
+# Usage
 
 The following examples show how to get a JDBC connection. 
     
@@ -60,6 +60,8 @@ The following examples show how to get a JDBC connection.
         @Inject
         private Connection connection;
 
+        @Transactional
+        @Jdbc("datasource1")
         public void updateStuff(int id, String bar){
             try{
                 String sql = "INSERT INTO FOO VALUES(?, ?)";
@@ -73,41 +75,25 @@ The following examples show how to get a JDBC connection.
         }
     }
     
-Any interaction with this connection will have to be realized inside a **transaction**. Refer to the [transaction support
-documentation](/docs/seed/manual/transactions) for more detail. Below is an example using the annotation-based transaction 
-demarcation (notice the data source name in `@Jdbc` annotation).
-
-    public class MyService {
-
-        @Inject
-        private MyRepository myRepository;
-
-        @Transactional
-        @Jdbc("datasource1")
-        public void doSomethingRelational() {
-            myRepository.updateStuff(1, "bar");
-        }
-    }
-
 {{% callout info %}}
-Note that the `@Jdbc` annotation is optional if you have only one type of transactional resources in your application AND if you
-only have one datasource. If you happen to be in this situation, we still recommend to explicitly specify the annotation 
-to avoid doing so when the project evolves down the road.
+As seen in the example above, any interaction with this connection have to be done inside a **transaction**. Refer to the [transaction support documentation](/docs/seed/manual/transactions) for more detail.
 {{% /callout %}}
 
-# DataSource providers
+# Data source providers
 
-When using a non JNDI datasource, we recommend the use of pooled datasource through a DataSourceProvider defined in the 
-configuration. Three DataSource providers are currently supported out-of-the-box:
+## Built-in providers
 
+When using a non JNDI data source, we recommend the use of pooled datasource through a DataSourceProvider defined in the 
+configuration. Four data source providers can be specified in the `provider` property:
 
 * [HikariCP](http://brettwooldridge.github.io/HikariCP/) with `HikariDataSourceProvider`
 * [Commons DBCP](http://commons.apache.org/proper/commons-dbcp/) with `DbcpDataSourceProvider`
 * [C3P0](http://www.mchange.com/projects/c3p0/) with `C3p0DataSourceProvider`
+* A test-only plain data source provider with `PlainDataSourceProvider`. **Do not use in production**.
 
-We also provide a test oriented DataSource that gives connection directly from the driver. Use `PlainDataSourceProvider`
-or do not specify a provider. In case you want to use another data source, you can create your own `DataSourceProvider` 
-by implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
+## Custom providers
+
+In the case you want to use another data source provider, you can create your own `DataSourceProvider` by implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
 
     public class SomeDataSourceProvider implements DataSourceProvider {
     
