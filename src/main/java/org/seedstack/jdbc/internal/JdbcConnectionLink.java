@@ -5,9 +5,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc.internal;
 
 import org.seedstack.jdbc.JdbcTransaction;
@@ -27,7 +24,7 @@ class JdbcConnectionLink implements TransactionalLink<Connection> {
     private final ThreadLocal<Deque<JdbcTransaction>> perThreadObjectContainer = new ThreadLocal<Deque<JdbcTransaction>>() {
         @Override
         protected Deque<JdbcTransaction> initialValue() {
-            return new ArrayDeque<JdbcTransaction>();
+            return new ArrayDeque<>();
         }
     };
 

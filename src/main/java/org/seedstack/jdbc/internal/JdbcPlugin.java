@@ -5,23 +5,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc.internal;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.nuun.kernel.api.plugin.InitState;
-import io.nuun.kernel.api.plugin.PluginException;
 import io.nuun.kernel.api.plugin.context.InitContext;
-import io.nuun.kernel.api.plugin.request.ClasspathScanRequest;
-import io.nuun.kernel.core.AbstractPlugin;
-import org.apache.commons.configuration.Configuration;
+import org.seedstack.jdbc.JdbcConfig;
 import org.seedstack.jdbc.spi.DataSourceProvider;
-import org.seedstack.jdbc.spi.JdbcRegistry;
+import org.seedstack.jdbc.spi.JdbcProvider;
+import org.seedstack.seed.core.internal.AbstractSeedPlugin;
 import org.seedstack.seed.core.internal.jndi.JndiPlugin;
-import org.seedstack.seed.core.spi.configuration.ConfigurationProvider;
-import org.seedstack.seed.transaction.internal.TransactionPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,47 +25,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JDBC support plugin
+ * This plugins configures, starts and stops JDBC datasources.
  */
-public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
-
-    public static final String JDBC_PLUGIN_CONFIGURATION_PREFIX = "org.seedstack.jdbc";
+public class JdbcPlugin extends AbstractSeedPlugin implements JdbcProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPlugin.class);
-
-    private Map<String, DataSourceDefinition> dataSourceDefinitions;
-
-    private final Map<Class<?>, String> registeredClasses = new HashMap<Class<?>, String>();
+    private final Map<String, DataSourceDefinition> dataSourceDefinitions = new HashMap<>();
+    private final Map<Class<?>, String> registeredClasses = new HashMap<>();
 
     @Override
     public String name() {
         return "jdbc";
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public InitState init(InitContext initContext) {
-        Configuration jdbcConfiguration = initContext.dependency(ConfigurationProvider.class)
-                .getConfiguration().subset(JDBC_PLUGIN_CONFIGURATION_PREFIX);
-        TransactionPlugin transactionPlugin = initContext.dependency(TransactionPlugin.class);
-        JndiPlugin jndiPlugin = initContext.dependency(JndiPlugin.class);
+    public Collection<Class<?>> dependencies() {
+        return Lists.newArrayList(JndiPlugin.class);
+    }
 
-        Collection<Class<?>> dataSourceProviderClasses = initContext.scannedSubTypesByParentClass()
-                .get(DataSourceProvider.class);
+    @Override
+    public InitState initialize(InitContext initContext) {
+        JdbcConfig jdbcConfig = getConfiguration(JdbcConfig.class);
+        DataSourceDefinitionFactory dataSourceDefinitionFactory = new DataSourceDefinitionFactory(initContext.dependency(JndiPlugin.class).getJndiContexts());
 
-        dataSourceDefinitions = new DataSourceDefinitionFactory(jdbcConfiguration)
-                .createDataSourceDefinitions(jndiPlugin.getJndiContexts(), dataSourceProviderClasses);
-
-        // If there is only one dataSource set it as the default
-        if (dataSourceDefinitions.size() == 1) {
-            JdbcTransactionMetadataResolver.defaultJdbc = dataSourceDefinitions.keySet().iterator().next();
+        if (jdbcConfig.getDataSources().isEmpty()) {
+            LOGGER.info("No datasource configured, JDBC support disabled");
+        } else {
+            jdbcConfig.getDataSources().entrySet().stream()
+                    .map((entry) -> dataSourceDefinitionFactory.createDataSourceDefinition(entry.getKey(), entry.getValue()))
+                    .forEach(dataSourceDefinition -> dataSourceDefinitions.put(dataSourceDefinition.getName(), dataSourceDefinition));
         }
 
-        // If dataSources are configured enable the JdbcTransactionHandler
-        if (!dataSourceDefinitions.isEmpty()) {
-            transactionPlugin.registerTransactionHandler(JdbcTransactionHandler.class);
+        if (!Strings.isNullOrEmpty(jdbcConfig.getDefaultDataSource())) {
+            JdbcTransactionMetadataResolver.defaultJdbc = jdbcConfig.getDefaultDataSource();
         }
 
         return InitState.INITIALIZED;
+    }
+
+    @Override
+    public Object nativeUnitModule() {
+        return new JdbcModule(dataSourceDefinitions, registeredClasses);
     }
 
     @Override
@@ -90,33 +83,8 @@ public class JdbcPlugin extends AbstractPlugin implements JdbcRegistry {
     }
 
     @Override
-    public Collection<Class<?>> requiredPlugins() {
-        return Lists.<Class<?>>newArrayList(ConfigurationProvider.class, TransactionPlugin.class, JndiPlugin.class);
-    }
-
-    @Override
-    public Object nativeUnitModule() {
-        return new JdbcModule(dataSourceDefinitions, registeredClasses);
-    }
-
-    @Override
-    public Collection<ClasspathScanRequest> classpathScanRequests() {
-        return classpathScanRequestBuilder().subtypeOf(DataSourceProvider.class).build();
-    }
-
-    @Override
-    public void registerDataSourceForClass(Class<?> aClass, String dataSourceName) {
-        if (!dataSourceDefinitions.containsKey(dataSourceName)) {
-            throw new PluginException("DataSource [" + dataSourceName
-                    + "] Does not exist. Make sure it corresponds to a DataSource declared under configuration " + JDBC_PLUGIN_CONFIGURATION_PREFIX
-                    + ".datasources");
-        }
-        registeredClasses.put(aClass, dataSourceName);
-    }
-
-    @Override
-    public DataSource getDataSource(String dataSource) {
-        DataSourceDefinition definition = dataSourceDefinitions.get(dataSource);
+    public DataSource getDataSource(String name) {
+        DataSourceDefinition definition = dataSourceDefinitions.get(name);
         if (definition != null) {
             return definition.getDataSource();
         } else {

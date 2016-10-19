@@ -5,9 +5,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc.internal;
 
 import com.google.inject.PrivateModule;
@@ -16,7 +13,7 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 import org.seedstack.jdbc.JdbcExceptionHandler;
-import org.seedstack.seed.transaction.spi.TransactionalProxy;
+import org.seedstack.seed.core.internal.transaction.TransactionalProxy;
 
 import java.sql.Connection;
 import java.util.Map;
@@ -59,7 +56,7 @@ class JdbcModule extends PrivateModule {
             bind(JdbcExceptionHandler.class).annotatedWith(dataSourceQualifier).toProvider(Providers.<JdbcExceptionHandler> of(null));
         }
 
-        JdbcTransactionHandler transactionHandler = new JdbcTransactionHandler(jdbcLink, definition.getDataSource());
+        JdbcTransactionHandler transactionHandler = new JdbcTransactionHandler(definition.getName(), jdbcLink, definition.getDataSource());
         bind(JdbcTransactionHandler.class).annotatedWith(dataSourceQualifier).toInstance(transactionHandler);
 
         expose(JdbcExceptionHandler.class).annotatedWith(dataSourceQualifier);

@@ -7,7 +7,5 @@
  */
 /**
  * Provides classes extending the JDBC addon.
- *
- * @author Pierre Thirouin
  */
 package org.seedstack.jdbc.spi;

@@ -5,48 +5,69 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 18 févr. 2015
- */
 package org.seedstack.jdbc.internal.datasource;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.seedstack.jdbc.internal.JdbcErrorCode;
 import org.seedstack.jdbc.spi.DataSourceProvider;
+import org.seedstack.seed.SeedException;
+import org.seedstack.seed.core.utils.SeedReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Data source provider for Hikari.
- *
- * @author yves.dautremay@mpsa.com
- */
 public class HikariDataSourceProvider implements DataSourceProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(HikariDataSourceProvider.class);
 
     @Override
-    public DataSource provide(String driverClass, String url, String user, String password, Properties dataSourceProperties) {
-        HikariDataSource ds = new HikariDataSource();
-
-        ds.setDriverClassName(driverClass);
-        ds.setJdbcUrl(url);
-        ds.setUsername(user);
-        ds.setPassword(password);
-        ds.setDataSourceProperties(dataSourceProperties);
-
-        return ds;
+    public DataSource provide(String driverClassName, String url, String user, String password, Properties dataSourceProperties) {
+        HikariConfig hikariConfig = getHikariConfig(driverClassName, url);
+        hikariConfig.setDriverClassName(driverClassName);
+        hikariConfig.setJdbcUrl(url);
+        hikariConfig.setDataSourceProperties(dataSourceProperties);
+        if (user != null) {
+            hikariConfig.setUsername(user);
+        }
+        if (password != null) {
+            hikariConfig.setPassword(password);
+        }
+        return new HikariDataSource(hikariConfig);
     }
 
     @Override
     public void close(DataSource dataSource) {
         try {
-            if (dataSource instanceof HikariDataSource) {
-                ((HikariDataSource) dataSource).close();
-            }
+            ((HikariDataSource) dataSource).close();
         } catch (Exception e) {
             LOGGER.warn("Unable to close datasource", e);
         }
+    }
+
+    private HikariConfig getHikariConfig(String driverClassName, String url) {
+        HikariConfig hikariConfig = null;
+
+        try (InputStream inputStream = SeedReflectionUtils.findMostCompleteClassLoader(HikariDataSourceProvider.class).getResourceAsStream("hikari.properties")) {
+            if (inputStream != null) {
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                hikariConfig = new HikariConfig(properties);
+                LOGGER.info("Loaded hikari.properties from classpath");
+            }
+        } catch (IOException e) {
+            throw SeedException.wrap(e, JdbcErrorCode.UNABLE_TO_PROVIDE_DATASOURCE)
+                    .put("driverClass", driverClassName)
+                    .put("url", url);
+        }
+
+        if (hikariConfig == null) {
+            hikariConfig = new HikariConfig();
+        }
+
+        return hikariConfig;
     }
 }

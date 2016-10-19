@@ -5,29 +5,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 18 févr. 2015
- */
 package org.seedstack.jdbc;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.sql.SQLException;
-
-import javax.inject.Inject;
 
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.seedstack.seed.it.SeedITRunner;
 import org.seedstack.jdbc.sample.Repository;
+import org.seedstack.seed.it.SeedITRunner;
 import org.seedstack.seed.transaction.Transactional;
+
+import javax.inject.Inject;
+import java.sql.SQLException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SeedITRunner.class)
 @NotThreadSafe
 public class JdbcPersistenceIT {
 
+    private static final String BARFOO = "barfoo";
+    private static final String FOOBAR = "foobar";
     @Inject
     private Repository repository;
 
@@ -46,36 +44,22 @@ public class JdbcPersistenceIT {
     }
 
     @Test
-    public void simpleTransaction() throws Exception {
-        String barfoo = "barfoo";
-        assertThat(internalSimpleTransaction(barfoo)).isEqualTo(barfoo);
-    }
-
     @Transactional
-    protected String internalSimpleTransaction(String barfoo) throws Exception {
-        int id = 1;
-        repository.add(id, barfoo);
-        return repository.getBar(id);
+    public void simpleTransaction() throws Exception {
+        repository.add(1, BARFOO);
+        assertThat(repository.getBar(1)).isEqualTo(BARFOO);
     }
 
     @Test
-    public void nestedTransaction() throws Exception {
-        assertThat(internalNestedTransaction()).isNull();
-    }
-
     @Transactional
     @Jdbc("datasource1")
-    protected String internalNestedTransaction() throws Exception {
-        int id1 = 1;
-        final String bar1 = "barfoo";
-        repository.add(id1, bar1);
-        int id2 = 2;
-        final String bar2 = "foobar";
+    public void nestedTransaction() throws Exception {
+        repository.add(1, BARFOO);
         try {
-            repository.addFail(id2, bar2);
+            repository.addFail(2, FOOBAR);
         } catch (Exception e) {
             // ignore exception
         }
-        return repository.getBar(id2);
+        assertThat(repository.getBar(2)).isNull();
     }
 }

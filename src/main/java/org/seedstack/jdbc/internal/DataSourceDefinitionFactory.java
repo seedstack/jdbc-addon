@@ -7,138 +7,77 @@
  */
 package org.seedstack.jdbc.internal;
 
-import io.nuun.kernel.api.plugin.PluginException;
-import org.apache.commons.configuration.Configuration;
-import org.seedstack.jdbc.JdbcExceptionHandler;
-import org.seedstack.jdbc.internal.datasource.PlainDataSourceProvider;
+import com.google.common.base.Strings;
+import org.seedstack.jdbc.JdbcConfig;
 import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.SeedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Map;
 
-/**
- * @author pierre.thirouin@ext.mpsa.com (Pierre Thirouin)
- */
 class DataSourceDefinitionFactory {
+    private final Map<String, Context> jndiContexts;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceDefinitionFactory.class);
-
-    private String[] dataSourceNames;
-    private Configuration jdbcConfiguration;
-
-    public DataSourceDefinitionFactory(Configuration jdbcConfiguration) {
-        this.jdbcConfiguration = jdbcConfiguration;
-        this.dataSourceNames = jdbcConfiguration.getStringArray("datasources");
+    DataSourceDefinitionFactory(Map<String, Context> jndiContexts) {
+        this.jndiContexts = jndiContexts;
     }
 
-    Map<String, DataSourceDefinition> createDataSourceDefinitions(Map<String, Context> jndiContext, Collection<Class<?>> dataSourceProviderClasses) {
-        // if there is no datasource configured do nothing
-        if (dataSourceNames.length == 0) {
-            LOGGER.info("No datasource configured, JDBC support disabled");
-            return new HashMap<String, DataSourceDefinition>();
-        }
-
-        Map<String, Class<? extends DataSourceProvider>> dataSourceProviderMap = dataSourceProviderByClassName(dataSourceProviderClasses);
-
-        final Map<String, DataSourceDefinition> dataSourceDefinitions = new HashMap<String, DataSourceDefinition>();
-
-        for (String dataSourceName : dataSourceNames) {
-            DataSourceDefinition dataSourceDefinition = createDataSourceDefinition(jndiContext, dataSourceProviderMap, dataSourceName);
-            dataSourceDefinitions.put(dataSourceName, dataSourceDefinition);
-        }
-        return dataSourceDefinitions;
-    }
-
-    private DataSourceDefinition createDataSourceDefinition(Map<String, Context> jndiContext, Map<String, Class<? extends DataSourceProvider>> dataSourceProviderMap, String dataSourceName) {
-        Configuration dataSourceConfig = jdbcConfiguration.subset("datasource." + dataSourceName);
-        if (dataSourceConfig.isEmpty()) {
-            throw SeedException.createNew(JdbcErrorCode.MISSING_DATASOURCE_CONFIG).put("name", dataSourceName);
-        }
+    DataSourceDefinition createDataSourceDefinition(String name, JdbcConfig.DataSourceConfig dataSourceConfig) {
         DataSourceDefinition dataSourceDefinition;
 
-        String dataSourceJndiName = dataSourceConfig.getString("jndi-name");
-        if (dataSourceJndiName != null) {
-            dataSourceDefinition = createJndiDataSource(jndiContext, dataSourceName, dataSourceConfig, dataSourceJndiName);
+        if (Strings.isNullOrEmpty(dataSourceConfig.getJndiName())) {
+            dataSourceDefinition = createLocalDataSource(name, dataSourceConfig);
         } else {
-            dataSourceDefinition = createDataSource(dataSourceProviderMap, dataSourceName, dataSourceConfig);
+            dataSourceDefinition = createJndiDataSource(name, dataSourceConfig);
         }
+        dataSourceDefinition.setJdbcExceptionHandler(dataSourceConfig.getExceptionHandler());
 
-        String exceptionHandler = dataSourceConfig.getString("exception-handler");
-        if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
-            try {
-                //noinspection unchecked
-                dataSourceDefinition.setJdbcExceptionHandler((Class<? extends JdbcExceptionHandler>) Class.forName(exceptionHandler));
-            } catch (Exception e) {
-                throw new PluginException("Unable to load class " + exceptionHandler, e);
-            }
-        }
         return dataSourceDefinition;
     }
 
-    private DataSourceDefinition createDataSource(Map<String, Class<? extends DataSourceProvider>> dataSourceProviderClasses, String datasourceName, Configuration dataSourceConfig) {
-        DataSourceDefinition dataSourceDefinition = new DataSourceDefinition(datasourceName);
-        String dataSourceProviderName = dataSourceConfig.getString("provider", PlainDataSourceProvider.class.getSimpleName());
-        Class<? extends DataSourceProvider> providerClass = dataSourceProviderClasses.get(dataSourceProviderName);
-        if (providerClass == null) {
-            throw new PluginException("Could not find a matching DataSourceProvider for configured value: " + dataSourceProviderName);
-        }
-        DataSourceProvider provider;
+    private DataSourceDefinition createLocalDataSource(String name, JdbcConfig.DataSourceConfig dataSourceConfig) {
+        DataSourceProvider dataSourceProvider;
         try {
-            provider = providerClass.newInstance();
+            dataSourceProvider = dataSourceConfig.getProvider().newInstance();
         } catch (Exception e) {
-            throw new PluginException("Unable to load class " + dataSourceProviderName, e);
+            throw SeedException.wrap(e, JdbcErrorCode.UNABLE_TO_INSTANTIATE_DATASOURCE_PROVIDER)
+                    .put("providerClass", dataSourceConfig.getProvider().getName());
         }
 
-        Iterator<String> it = dataSourceConfig.getKeys("property");
-        Properties otherProperties = new Properties();
-        while (it.hasNext()) {
-            String name = it.next();
-            otherProperties.put(name.substring(9), dataSourceConfig.getString(name));
-        }
-
-        dataSourceDefinition.setDataSource(provider.provide(
-                dataSourceConfig.getString("driver"),
-                dataSourceConfig.getString("url"),
-                dataSourceConfig.getString("user"),
-                dataSourceConfig.getString("password"),
-                otherProperties));
-
-        dataSourceDefinition.setDataSourceProvider(provider);
+        DataSourceDefinition dataSourceDefinition = new DataSourceDefinition(name, dataSourceProvider.provide(
+                dataSourceConfig.getDriver().getName(),
+                dataSourceConfig.getUrl(),
+                dataSourceConfig.getUser(),
+                dataSourceConfig.getPassword(),
+                dataSourceConfig.getProperties()
+        ));
+        dataSourceDefinition.setDataSourceProvider(dataSourceProvider);
         return dataSourceDefinition;
     }
 
-    private DataSourceDefinition createJndiDataSource(Map<String, Context> jndiContext, String datasourceName, Configuration dataSourceConfig, String dataSourceJndiName) {
-        String dataSourceContextName = dataSourceConfig.getString("context");
+    private DataSourceDefinition createJndiDataSource(String name, JdbcConfig.DataSourceConfig dataSourceConfig) {
         Context context;
-        if (dataSourceContextName != null) {
-            context = jndiContext.get(dataSourceContextName);
-            if (context == null) {
-                throw new PluginException("Wrong context [" + dataSourceContextName + "] name for datasource " + dataSourceContextName);
-            }
+        if (Strings.isNullOrEmpty(dataSourceConfig.getJndiContext())) {
+            context = jndiContexts.get("default");
         } else {
-            context = jndiContext.get("default");
+            context = jndiContexts.get(dataSourceConfig.getJndiContext());
         }
 
-        DataSource dataSource;
+        if (context == null) {
+            throw SeedException.createNew(JdbcErrorCode.JNDI_CONTEXT_NOT_FOUND)
+                    .put("jndiContext", dataSourceConfig.getJndiContext())
+                    .put("dataSource", name);
+        }
+
         try {
-            dataSource = (DataSource) context.lookup(dataSourceJndiName);
+            return new DataSourceDefinition(name, (DataSource) context.lookup(dataSourceConfig.getJndiName()));
         } catch (NamingException e) {
-            throw new PluginException("Wrong JNDI name for datasource " + datasourceName, e);
+            throw SeedException.createNew(JdbcErrorCode.JNDI_NAME_NOT_FOUND)
+                    .put("jndiName", dataSourceConfig.getJndiName())
+                    .put("jndiContext", dataSourceConfig.getJndiContext())
+                    .put("dataSource", name);
         }
-        return new DataSourceDefinition(datasourceName, dataSource);
-    }
-
-    private Map<String, Class<? extends DataSourceProvider>> dataSourceProviderByClassName(Collection<Class<?>> dataSourceProviderClasses) {
-        Map<String, Class<? extends DataSourceProvider>> dataSourceProviderMap = new HashMap<String, Class<? extends DataSourceProvider>>();
-        for (Class<?> clazz : dataSourceProviderClasses) {
-            //noinspection unchecked
-            dataSourceProviderMap.put(clazz.getSimpleName(), (Class<? extends DataSourceProvider>) clazz);
-        }
-        return dataSourceProviderMap;
     }
 }

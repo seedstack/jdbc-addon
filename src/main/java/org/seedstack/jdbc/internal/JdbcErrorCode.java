@@ -5,32 +5,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc.internal;
 
 import org.seedstack.seed.ErrorCode;
 
-/**
- * JDBC Error codes
- */
 public enum JdbcErrorCode implements ErrorCode {
-
     ACCESSING_JDBC_CONNECTION_OUTSIDE_TRANSACTION,
-
     CANNOT_CONNECT_TO_JDBC_DATASOURCE,
-
-    JDBC_COMMIT_EXCEPTION,
-
-    JDBC_ROLLBACK_EXCEPTION,
-
+    ERROR_AUTO_DETECTING_JDBC_DRIVER,
     JDBC_CLOSE_EXCEPTION,
-
-    WRONG_JDBC_DRIVER,
-
-    WRONG_DATASOURCE_PROVIDER,
-
-    WRONG_DATASOURCE_CONTEXT, MISSING_DATASOURCE_CONFIG;
-
+    JDBC_COMMIT_EXCEPTION,
+    JDBC_ROLLBACK_EXCEPTION,
+    JNDI_CONTEXT_NOT_FOUND,
+    JNDI_NAME_NOT_FOUND,
+    UNABLE_TO_INSTANTIATE_DATASOURCE_PROVIDER,
+    UNABLE_TO_PROVIDE_DATASOURCE
 }

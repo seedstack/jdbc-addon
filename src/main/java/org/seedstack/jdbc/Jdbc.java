@@ -5,9 +5,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc;
 
 import java.lang.annotation.ElementType;
@@ -19,18 +16,16 @@ import java.lang.annotation.Target;
 /**
  * This annotation accompanies the {@link org.seedstack.seed.transaction.Transactional} annotation to define the transaction as a JDBC one and
  * specify the concerned JDBC datasource.
- * 
- * @author yves.dautremay@mpsa.com
  */
-@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Jdbc {
 
     /**
-     * Specifies the data source name to use
-     * 
-     * @return the data source name from which the connection will be used
+     * Specifies the data source name to use.
+     *
+     * @return the data source name from which the connection will be used.
      */
     String value() default "";
 }

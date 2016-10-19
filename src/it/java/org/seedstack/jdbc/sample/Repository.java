@@ -5,27 +5,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 19 févr. 2015
- */
 package org.seedstack.jdbc.sample;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.inject.Inject;
 
 import org.seedstack.jdbc.Jdbc;
 import org.seedstack.seed.it.ITBind;
 import org.seedstack.seed.transaction.Propagation;
 import org.seedstack.seed.transaction.Transactional;
 
+import javax.inject.Inject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 @ITBind
 public class Repository {
-
     @Inject
     private Connection connection;
 

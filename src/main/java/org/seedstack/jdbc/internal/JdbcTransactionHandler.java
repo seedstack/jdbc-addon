@@ -5,9 +5,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-/*
- * Creation : 17 févr. 2015
- */
 package org.seedstack.jdbc.internal;
 
 import org.seedstack.jdbc.JdbcTransaction;
@@ -24,9 +21,8 @@ import java.sql.SQLException;
  * connection must be passed but a savepoint is created in case of partial rollback.
  */
 class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
-
+    private final String name;
     private final DataSource dataSource;
-
     private final JdbcConnectionLink jdbcConnectionLink;
 
     /**
@@ -35,7 +31,8 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
      * @param jdbcConnectionLink jdbc link for the connection
      * @param dataSource         the datasource to use when needing a new connection
      */
-    JdbcTransactionHandler(JdbcConnectionLink jdbcConnectionLink, DataSource dataSource) {
+    JdbcTransactionHandler(String name, JdbcConnectionLink jdbcConnectionLink, DataSource dataSource) {
+        this.name = name;
         this.dataSource = dataSource;
         this.jdbcConnectionLink = jdbcConnectionLink;
     }
@@ -53,7 +50,8 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
                 transaction = new JdbcTransaction(connection, connection.setSavepoint());
             }
         } catch (SQLException e) {
-            throw SeedException.wrap(e, JdbcErrorCode.CANNOT_CONNECT_TO_JDBC_DATASOURCE);
+            throw SeedException.wrap(e, JdbcErrorCode.CANNOT_CONNECT_TO_JDBC_DATASOURCE)
+                    .put("dataSource", name);
         }
         jdbcConnectionLink.push(transaction);
     }
@@ -65,7 +63,7 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
 
     @Override
     public void doJoinGlobalTransaction() {
-        throw new UnsupportedOperationException("JDBC persistence implementation does not support global transactions");
+        throw new UnsupportedOperationException("Global transactions are not supported with JDBC");
     }
 
     @Override
@@ -78,7 +76,8 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
         try {
             transaction.commit();
         } catch (SQLException e) {
-            throw SeedException.wrap(e, JdbcErrorCode.JDBC_COMMIT_EXCEPTION);
+            throw SeedException.wrap(e, JdbcErrorCode.JDBC_COMMIT_EXCEPTION)
+                    .put("dataSource", name);
         }
     }
 
@@ -92,7 +91,8 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
         try {
             transaction.rollBack();
         } catch (SQLException e) {
-            throw SeedException.wrap(e, JdbcErrorCode.JDBC_ROLLBACK_EXCEPTION);
+            throw SeedException.wrap(e, JdbcErrorCode.JDBC_ROLLBACK_EXCEPTION)
+                    .put("dataSource", name);
         }
     }
 
@@ -107,7 +107,8 @@ class JdbcTransactionHandler implements TransactionHandler<JdbcTransaction> {
         try {
             jdbcConnectionLink.pop();
         } catch (SQLException e) {
-            throw SeedException.wrap(e, JdbcErrorCode.JDBC_CLOSE_EXCEPTION);
+            throw SeedException.wrap(e, JdbcErrorCode.JDBC_CLOSE_EXCEPTION)
+                    .put("dataSource", name);
         }
     }
 

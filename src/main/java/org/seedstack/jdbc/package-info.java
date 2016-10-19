@@ -7,7 +7,5 @@
  */
 /**
  * Provides Seed classes facilitating the usage of JDBC.
- *
- * @author Pierre Thirouin
  */
 package org.seedstack.jdbc;
