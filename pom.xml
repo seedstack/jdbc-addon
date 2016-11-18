@@ -24,7 +24,7 @@
     <properties>
         <seed.version>3.0.0-SNAPSHOT</seed.version>
 
-        <compatibility.version>2.1.0</compatibility.version>
+        <compatibility.skip>true</compatibility.skip>
 
         <bintray.package>jdbc-addon</bintray.package>
     </properties>
