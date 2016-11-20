@@ -104,11 +104,11 @@ public class JdbcConfig {
         }
 
         public Properties getProperties() {
-            return new Properties(properties);
+            return properties;
         }
 
         public DataSourceConfig setProperties(Properties properties) {
-            this.properties = new Properties(properties);
+            this.properties = properties;
             return this;
         }
 
