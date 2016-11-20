@@ -108,11 +108,11 @@ public class JdbcConfig {
         }
 
         public DataSourceConfig setProperties(Properties properties) {
-            this.properties = properties;
+            this.properties = new Properties(properties);
             return this;
         }
 
-        public DataSourceConfig addProperty(String name, String value) {
+        public DataSourceConfig setProperty(String name, String value) {
             this.properties.setProperty(name, value);
             return this;
         }
