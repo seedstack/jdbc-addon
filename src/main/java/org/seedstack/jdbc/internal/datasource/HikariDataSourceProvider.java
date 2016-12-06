@@ -12,7 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.seedstack.jdbc.internal.JdbcErrorCode;
 import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.SeedException;
-import org.seedstack.seed.core.utils.SeedReflectionUtils;
+import org.seedstack.shed.ClassLoaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class HikariDataSourceProvider implements DataSourceProvider {
     private HikariConfig getHikariConfig(String driverClassName, String url) {
         HikariConfig hikariConfig = null;
 
-        try (InputStream inputStream = SeedReflectionUtils.findMostCompleteClassLoader(HikariDataSourceProvider.class).getResourceAsStream("hikari.properties")) {
+        try (InputStream inputStream = ClassLoaders.findMostCompleteClassLoader(HikariDataSourceProvider.class).getResourceAsStream("hikari.properties")) {
             if (inputStream != null) {
                 Properties properties = new Properties();
                 properties.load(inputStream);

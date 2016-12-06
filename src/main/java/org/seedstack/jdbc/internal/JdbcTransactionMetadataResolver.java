@@ -10,31 +10,33 @@ package org.seedstack.jdbc.internal;
 import org.aopalliance.intercept.MethodInvocation;
 import org.seedstack.jdbc.Jdbc;
 import org.seedstack.jdbc.JdbcExceptionHandler;
-import org.seedstack.seed.core.utils.SeedReflectionUtils;
 import org.seedstack.seed.transaction.spi.TransactionMetadata;
 import org.seedstack.seed.transaction.spi.TransactionMetadataResolver;
+
+import java.util.Optional;
 
 class JdbcTransactionMetadataResolver implements TransactionMetadataResolver {
     static String defaultJdbc;
 
     @Override
     public TransactionMetadata resolve(MethodInvocation methodInvocation, TransactionMetadata defaults) {
-        Jdbc jdbc = SeedReflectionUtils.getMethodOrAncestorMetaAnnotatedWith(methodInvocation.getMethod(), Jdbc.class);
-        if (jdbc != null || JdbcTransactionHandler.class.equals(defaults.getHandler())) {
+        Optional<Jdbc> jdbc = JdbcResolver.INSTANCE.apply(methodInvocation.getMethod());
+        if (jdbc.isPresent() || JdbcTransactionHandler.class.equals(defaults.getHandler())) {
             TransactionMetadata result = new TransactionMetadata();
             result.setHandler(JdbcTransactionHandler.class);
             result.setExceptionHandler(JdbcExceptionHandler.class);
-            result.setResource(resolveResourceName(jdbc));
+            result.setResource(jdbc.isPresent() ? resolveDatasource(jdbc.get()) : defaultJdbc);
             return result;
         }
         return null;
     }
 
-    private String resolveResourceName(Jdbc jdbc) {
-        if (jdbc != null && !"".equals(jdbc.value())) {
-            return jdbc.value();
-        } else {
+    private String resolveDatasource(Jdbc jdbc) {
+        String value = jdbc.value();
+        if (value.isEmpty()) {
             return defaultJdbc;
+        } else {
+            return value;
         }
     }
 }

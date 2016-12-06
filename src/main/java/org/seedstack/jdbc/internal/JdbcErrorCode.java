@@ -7,7 +7,7 @@
  */
 package org.seedstack.jdbc.internal;
 
-import org.seedstack.seed.ErrorCode;
+import org.seedstack.shed.exception.ErrorCode;
 
 public enum JdbcErrorCode implements ErrorCode {
     ACCESSING_JDBC_CONNECTION_OUTSIDE_TRANSACTION,
