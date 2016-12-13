@@ -1,6 +1,6 @@
-# Version 3.0.0 (2016-11-?)
+# Version 3.0.0 (2016-12-13)
 
-* [brk] Moved to SeedStack 16.11 new configuration system.
+* [brk] Update to SeedStack 16.11 new configuration system.
 * [brk] Remove the possibility of NOT specifying the datasource in `@Jdbc` if only one is present. Use the `defaultDatasource` configuration property instead. 
 * [new] The Hikari provider automatically picks the `hikari.properties` file if present at the classpath root.
 
