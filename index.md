@@ -1,12 +1,8 @@
 ---
-title: "Basics"
-name: "JDBC"
+title: "JDBC"
 repo: "https://github.com/seedstack/jdbc-addon"
-date: 2016-01-21
 author: Yves DAUTREMAY
 description: "Provides configuration, injection and transactions for JDBC datasources."
-backend: true
-weight: -1
 tags:
     - "persistence"
     - "jdbc"
