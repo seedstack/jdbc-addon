@@ -19,98 +19,151 @@ menu:
         weight: 10
 ---
 
-Seed JDBC persistence add-on enables your application to interface with any relational database through the JDBC API. 
+SeedStack JDBC add-on provides support for connection to any relational database through the JDBC API. 
+
+# Dependency
 
 {{< dependency g="org.seedstack.addons.jdbc" a="jdbc" >}}
 
+{{% callout info %}}
+A JDBC driver is also required in the classpath and depends upon the chosen database.
+{{% /callout %}}
+
 # Configuration
 
-You can configure the add-on in one or more of your \*.props files. Declare you list of data source names you will be 
-configuring later:
+Configuration is done by declaring one or more data-sources:
 
-    org.seedstack.jdbc.datasources = datasource1, datasource2, ...
+```yaml
+jdbc:
+  # Configured data-sources with the name of the data-source as key
+  datasources:
+    datasource1:
+      # The fully qualified class name of the data-source provider (see below, defaults to 'org.seedstack.jdbc.internal.datasource.PlainDataSourceProvider')
+      provider: (Class<? extends DataSourceProvider>)
+
+      # The fully qualified class name of the JDBC driver (automatically detected from url if not specified)
+      driver: (Class<? extends Driver>)
+      
+      # The URL of the data-source
+      url: (String)
+      
+      # The properties of the data-source (dependent on the driver) 
+      properties:
+        property1: value1
+      
+      # The username used to connect to the data-source (optional) 
+      user: (String)
+      
+      # The password used to connect to the data-source (optional)
+      password: (String)
+      
+      # The fully qualified class name of the exception handler (optional)
+      exceptionHandler: (Class<? extends JdbcExceptionHandler>)
+      
+      # When looking up the datasource through JNDI, the name of the data-source.
+      jndiName: (String)
+      
+      # When looking up the datasource through JNDI, the context to do the lookup (use the default context if not specified)
+      jndiContext: (String)      
     
-Configure each data source separately. Notice the use of the keyword *property* to specify any property that will be 
-used by the datasource as specific configuration.
+  # The name of the configured data-source to use if nothing is specified in the '@Jdbc' annotation    
+  defaultDatasource: (String)
+```
 
-    [org.seedstack.jdbc.datasource.datasource1]
-    provider = HikariDataSourceProvider
-    driver = org.hsqldb.jdbcDriver
-    url = jdbc:hsqldb:mem:testdb1
-    user = sa
-    password =
-    property.specific.jdbc.prop = value
-    property.prop.for.datasource = value
+## Examples
 
-Alternatively, if you want to lookup the data source through JNDI you can use this configuration:
+### With Hikari pooling
 
-    [org.seedstack.jdbc.datasource.datasource1]
-    jndi-name = java:comp/env/jdbc/my-datasource
-    context = ...
+The following YAML configures a data-source named `datasource1`, using the [Hikari connection pool](https://brettwooldridge.github.io/HikariCP/)
+which is a very fast and reliable connection pool.
+
+```yaml
+jdbc:
+  datasources:
+    datasource1:
+      provider: org.seedstack.jdbc.internal.datasource.HikariDataSourceProvider
+      url: jdbc:hsqldb:mem:testdb1
+```
+
+Note that the driver class name is automatically detected according to the URL. The Hikari dependency will be needed: 
+
+{{< dependency g="com.zaxxer" a="HikariCP" v="2.5.1" >}}
+
+### JNDI lookup
     
-The `context` property is optional and can be used to specify a particular context name configured in 
-[core support]({{< ref "docs/seed/manual/more.md#jndi" >}}) to make the lookup. Otherwise the default context (named `default`) will be used.
+When a JNDI name is specified, the `provider`, `url`, `properties`, `user` and `password` configuration options
+are ignored.      
+    
+```yaml
+jdbc:
+  datasources:
+    datasource1:
+      jndiName: java:comp/env/jdbc/my-datasource
+```    
+
+{{% callout info %}}
+The `jndiContext` configuration option is needed only when you want to do the lookup in a non-default JNDI context.
+{{% /callout %}}
     
 # Usage
 
 The following examples show how to get a JDBC connection. 
     
-    public class MyRepository {
+```java
+public class MyRepository {
+    @Inject
+    private Connection connection;
 
-        @Inject
-        private Connection connection;
-
-        @Transactional
-        @Jdbc("datasource1")
-        public void updateStuff(int id, String bar){
-            try{
-                String sql = "INSERT INTO FOO VALUES(?, ?)";
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setInt(1, id);
-                statement.setString(2, bar);
-                statement.executeUpdate();
-            } catch(SqlException e){
-                throw new SomeRuntimeException(e, "message");
-            }
+    @Transactional
+    @Jdbc("datasource1")
+    public void updateStuff(int id, String bar){
+        try{
+            String sql = "INSERT INTO FOO VALUES(?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.setString(2, bar);
+            statement.executeUpdate();
+        } catch(SqlException e){
+            throw new SomeRuntimeException(e, "message");
         }
     }
+}
+```
     
 {{% callout info %}}
-As seen in the example above, any interaction with this connection have to be done inside a **transaction**. Refer to the [transaction support documentation]({{< ref "docs/seed/manual/transactions.md" >}}) for more detail.
+Any interaction with this connection have to be done inside a **transaction**. Refer to the 
+[transaction documentation]({{< ref "docs/seed/manual/transactions.md" >}}) for more detail.
 {{% /callout %}}
 
 # Data source providers
 
-## Built-in providers
+## Built-in
 
-When using a non JNDI data source, we recommend the use of pooled datasource through a DataSourceProvider defined in the 
-configuration. Four data source providers can be specified in the `provider` property:
+When using a non JNDI data-source, we recommend the use of a connection pool. This is done by specifying a class 
+implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface. The built-in providers are:
 
 * [HikariCP](http://brettwooldridge.github.io/HikariCP/) with `HikariDataSourceProvider`
 * [Commons DBCP](http://commons.apache.org/proper/commons-dbcp/) with `DbcpDataSourceProvider`
 * [C3P0](http://www.mchange.com/projects/c3p0/) with `C3p0DataSourceProvider`
-* A test-only plain data source provider with `PlainDataSourceProvider`. **Do not use in production**.
+* A test-only, do-nothing, plain data-source provider with `PlainDataSourceProvider`. **Do not use in production**.
 
-## Custom providers
+{{% callout info %}}
+To use a connection pool, add its dependency on the classpath. Each connection pool must be configured according to its 
+documentation.
+{{% /callout %}}
 
-In the case you want to use another data source provider, you can create your own `DataSourceProvider` by implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
+## Custom
 
-    public class SomeDataSourceProvider implements DataSourceProvider {
-    
-        @Override
-        public DataSource provideDataSource(String driverClass, String
-                url, String user, String password, Properties jdbcProperties) {
-            SomeDataSource sds = new SomeDataSource();
-            sds.setDriverClass(driverClass);
-            sds.setJdbcUrl(url);
-            sds.setUser(url);
-            sds.setPassword(user);
-            sds.setProperties(jdbcProperties);
-            return sds;
-        }
-    
+In the case you want to use another data source provider, you can create your own `DataSourceProvider` by implementing 
+the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
+
+```java
+public class SomeDataSourceProvider implements DataSourceProvider {
+    @Override
+    public DataSource provideDataSource(String driverClass, String url, String user, String password, Properties jdbcProperties) {
+        // TODO: build the data-source and return it
     }
-    
-You will be able to declare it in your configuration as `SomeDataSourceProvider` (the simple name of your class). Note 
-that if you want to use one of the three datasource providers described above, you will have to add the corresponding 
-dependency to your project.
+}
+```
+
+To use it, just specify the fully qualified name of the class in the `provider` configuration option.
