@@ -49,7 +49,7 @@ Alternatively, if you want to lookup the data source through JNDI you can use th
     context = ...
     
 The `context` property is optional and can be used to specify a particular context name configured in 
-[core support](/docs/seed/manual/core/jndi) to make the lookup. Otherwise the default context (named `default`) will be used.
+[core support]({{< ref "docs/seed/manual/more.md#jndi" >}}) to make the lookup. Otherwise the default context (named `default`) will be used.
     
 # Usage
 
@@ -76,7 +76,7 @@ The following examples show how to get a JDBC connection.
     }
     
 {{% callout info %}}
-As seen in the example above, any interaction with this connection have to be done inside a **transaction**. Refer to the [transaction support documentation](/docs/seed/manual/transactions) for more detail.
+As seen in the example above, any interaction with this connection have to be done inside a **transaction**. Refer to the [transaction support documentation]({{< ref "docs/seed/manual/transactions.md" >}}) for more detail.
 {{% /callout %}}
 
 # Data source providers
