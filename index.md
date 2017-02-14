@@ -29,6 +29,7 @@ A JDBC driver is also required in the classpath and depends upon the chosen data
 
 Configuration is done by declaring one or more data-sources:
 
+{{% config p="jdbc" %}}
 ```yaml
 jdbc:
   # Configured data-sources with the name of the data-source as key
@@ -65,6 +66,7 @@ jdbc:
   # The name of the configured data-source to use if nothing is specified in the '@Jdbc' annotation    
   defaultDatasource: (String)
 ```
+{{% /config %}}    
 
 ## Examples
 
