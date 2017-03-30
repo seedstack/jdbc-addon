@@ -4,10 +4,8 @@ repo: "https://github.com/seedstack/jdbc-addon"
 author: Yves DAUTREMAY
 description: "Provides configuration, injection and transactions for JDBC datasources."
 tags:
-    - "persistence"
-    - "jdbc"
-    - "data"
-    - "database"
+    - persistence
+    - transactions
 zones:
     - Addons
 menu:
