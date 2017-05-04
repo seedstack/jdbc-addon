@@ -13,7 +13,7 @@ menu:
         weight: 10
 ---
 
-SeedStack JDBC add-on provides support for connection to any relational database through the JDBC API. 
+SeedStack JDBC add-on provides support for connection to any relational database through the JDBC API.<!--more--> 
 
 # Dependency
 
