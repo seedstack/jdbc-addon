@@ -91,4 +91,13 @@ public class JdbcPlugin extends AbstractSeedPlugin implements JdbcProvider {
             return null;
         }
     }
+    
+    @Override
+    public Map<String, DataSource> getAllDataSource() {
+      Map<String, DataSource> dataSourceMap = new HashMap<>();
+      dataSourceDefinitions.forEach((datasourceName, datasource)-> {
+        dataSourceMap.put(datasourceName, datasource.getDataSource());
+      });    	
+        return dataSourceMap;
+    }
 }

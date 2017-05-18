@@ -9,6 +9,8 @@ package org.seedstack.jdbc.spi;
 
 import io.nuun.kernel.api.annotations.Facet;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 /**
@@ -23,4 +25,11 @@ public interface JdbcProvider {
      * @return the datasource.
      */
     DataSource getDataSource(String name);
+    
+    /**
+     * Provides all configured data source.
+     *
+     * @return All the datasource.
+     */
+    Map<String, DataSource> getAllDataSource();
 }
