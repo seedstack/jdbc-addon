@@ -20,8 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,11 +96,11 @@ public class JdbcPlugin extends AbstractSeedPlugin implements JdbcProvider {
     }
     
     @Override
-    public Map<String, DataSource> getAllDataSource() {
-      Map<String, DataSource> dataSourceMap = new HashMap<>();
+    public List<String> getDataSourceNames() {
+    	List<String> dataSourceNames = new ArrayList<>();
       dataSourceDefinitions.forEach((datasourceName, datasource)-> {
-        dataSourceMap.put(datasourceName, datasource.getDataSource());
+        dataSourceNames.add(datasourceName);
       });    	
-        return dataSourceMap;
+      return dataSourceNames;
     }
 }
