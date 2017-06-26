@@ -7,7 +7,6 @@
  */
 package org.seedstack.jdbc.internal;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.nuun.kernel.api.plugin.InitState;
 import io.nuun.kernel.api.plugin.context.InitContext;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,10 +56,6 @@ public class JdbcPlugin extends AbstractSeedPlugin implements JdbcProvider {
                     .forEach(dataSourceDefinition -> dataSourceDefinitions.put(dataSourceDefinition.getName(), dataSourceDefinition));
         }
 
-        if (!Strings.isNullOrEmpty(jdbcConfig.getDefaultDataSource())) {
-            JdbcTransactionMetadataResolver.defaultJdbc = jdbcConfig.getDefaultDataSource();
-        }
-
         return InitState.INITIALIZED;
     }
 
@@ -94,13 +88,13 @@ public class JdbcPlugin extends AbstractSeedPlugin implements JdbcProvider {
             return null;
         }
     }
-    
+
     @Override
     public List<String> getDataSourceNames() {
-    	List<String> dataSourceNames = new ArrayList<>();
-      dataSourceDefinitions.forEach((datasourceName, datasource)-> {
-        dataSourceNames.add(datasourceName);
-      });    	
-      return dataSourceNames;
+        List<String> dataSourceNames = new ArrayList<>();
+        dataSourceDefinitions.forEach((datasourceName, datasource) -> {
+            dataSourceNames.add(datasourceName);
+        });
+        return dataSourceNames;
     }
 }

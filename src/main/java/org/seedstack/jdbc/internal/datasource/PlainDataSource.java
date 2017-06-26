@@ -8,7 +8,9 @@
 package org.seedstack.jdbc.internal.datasource;
 
 import javax.sql.DataSource;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -20,7 +22,7 @@ class PlainDataSource implements DataSource {
     private final Driver driver;
     private final String url;
     private final Properties properties;
-    private PrintWriter writer = new PrintWriter(System.out);
+    private PrintWriter writer = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
     private int timeout;
 
     PlainDataSource(Driver driver, String url, Properties properties, String user, String password) {
