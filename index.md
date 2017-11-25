@@ -128,7 +128,7 @@ public class MyRepository {
     
 {{% callout info %}}
 Any interaction with this connection have to be done inside a **transaction**. Refer to the 
-[transaction documentation]({{< ref "docs/seed/manual/transactions.md" >}}) for more detail.
+[transaction documentation]({{< ref "docs/core/transactions.md" >}}) for more detail.
 {{% /callout %}}
 
 # Data source providers
