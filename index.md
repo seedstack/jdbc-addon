@@ -1,5 +1,6 @@
 ---
 title: "JDBC"
+addon: "JDBC"
 repo: "https://github.com/seedstack/jdbc-addon"
 author: Yves DAUTREMAY
 description: "Provides configuration, injection and transactions for JDBC datasources."
@@ -8,14 +9,12 @@ tags:
     - transactions
 zones:
     - Addons
-menu:
-    AddonJDBC:
-        weight: 10
+noMenu: true    
 ---
 
 SeedStack JDBC add-on provides support for connection to any relational database through the JDBC API.<!--more--> 
 
-# Dependency
+## Dependency
 
 {{< dependency g="org.seedstack.addons.jdbc" a="jdbc" >}}
 
@@ -23,7 +22,7 @@ SeedStack JDBC add-on provides support for connection to any relational database
 A JDBC driver is also required in the classpath and depends upon the chosen database.
 {{% /callout %}}
 
-# Configuration
+## Configuration
 
 Configuration is done by declaring one or more data-sources:
 
@@ -66,9 +65,9 @@ jdbc:
 ```
 {{% /config %}}    
 
-## Examples
+### Examples
 
-### With Hikari pooling
+#### With Hikari pooling
 
 The following YAML configures a data-source named `datasource1`, using the [Hikari connection pool](https://brettwooldridge.github.io/HikariCP/)
 which is a very fast and reliable connection pool.
@@ -85,7 +84,7 @@ Note that the driver class name is automatically detected according to the URL. 
 
 {{< dependency g="com.zaxxer" a="HikariCP" v="2.5.1" >}}
 
-### JNDI lookup
+#### JNDI lookup
     
 When a JNDI name is specified, the `provider`, `url`, `properties`, `user` and `password` configuration options
 are ignored.      
@@ -101,7 +100,7 @@ jdbc:
 The `jndiContext` configuration option is needed only when you want to do the lookup in a non-default JNDI context.
 {{% /callout %}}
     
-# Usage
+## Usage
 
 The following examples show how to get a JDBC connection. 
     
@@ -131,9 +130,9 @@ Any interaction with this connection have to be done inside a **transaction**. R
 [transaction documentation]({{< ref "docs/core/transactions.md" >}}) for more detail.
 {{% /callout %}}
 
-# Data source providers
+## Data source providers
 
-## Built-in
+### Built-in
 
 When using a non JNDI data-source, we recommend the use of a connection pool. This is done by specifying a class 
 implementing the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface. The built-in providers are:
@@ -148,7 +147,7 @@ To use a connection pool, add its dependency on the classpath. Each connection p
 documentation.
 {{% /callout %}}
 
-## Custom
+### Custom
 
 In the case you want to use another data source provider, you can create your own `DataSourceProvider` by implementing 
 the {{< java "org.seedstack.jdbc.spi.DataSourceProvider" >}} interface:
