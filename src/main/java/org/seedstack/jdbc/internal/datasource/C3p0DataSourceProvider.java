@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013-2016, The SeedStack authors <http://seedstack.org>
+/*
+ * Copyright © 2013-2020, The SeedStack authors <http://seedstack.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,9 @@ public class C3p0DataSourceProvider implements DataSourceProvider {
         try {
             comboPooledDataSource.setDriverClass(driverClassName);
             comboPooledDataSource.setJdbcUrl(url);
-            comboPooledDataSource.setProperties(jdbcProperties);
+            if (jdbcProperties != null) {
+                comboPooledDataSource.setProperties(jdbcProperties);
+            }
             if (user != null) {
                 comboPooledDataSource.setUser(user);
             }
@@ -45,7 +47,9 @@ public class C3p0DataSourceProvider implements DataSourceProvider {
     @Override
     public void close(DataSource dataSource) {
         try {
-            ((ComboPooledDataSource) dataSource).close();
+            if (dataSource instanceof ComboPooledDataSource) {
+                ((ComboPooledDataSource) dataSource).close();
+            }
         } catch (Exception e) {
             LOGGER.warn("Unable to close datasource", e);
         }

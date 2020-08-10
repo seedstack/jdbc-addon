@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013-2016, The SeedStack authors <http://seedstack.org>
+/*
+ * Copyright © 2013-2020, The SeedStack authors <http://seedstack.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,9 @@ public class DbcpDataSourceProvider implements DataSourceProvider {
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setDriverClassName(driverClassName);
         basicDataSource.setUrl(url);
-        addConnectionProperties(basicDataSource, dataSourceProperties);
+        if (dataSourceProperties != null) {
+            addConnectionProperties(basicDataSource, dataSourceProperties);
+        }
         if (user != null) {
             basicDataSource.setUsername(user);
         }
@@ -36,7 +38,9 @@ public class DbcpDataSourceProvider implements DataSourceProvider {
     @Override
     public void close(DataSource dataSource) {
         try {
-            ((BasicDataSource) dataSource).close();
+            if (dataSource instanceof BasicDataSource) {
+                ((BasicDataSource) dataSource).close();
+            }
         } catch (Exception e) {
             LOGGER.warn("Unable to close datasource", e);
         }

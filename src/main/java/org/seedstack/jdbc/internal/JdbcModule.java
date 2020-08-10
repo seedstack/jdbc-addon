@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013-2016, The SeedStack authors <http://seedstack.org>
+/*
+ * Copyright © 2013-2020, The SeedStack authors <http://seedstack.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,10 +41,10 @@ class JdbcModule extends PrivateModule {
         }
 
         // Classes registered to use a specific datasource
-        bind(new TypeLiteral<Map<Class<?>, String>>() {}).annotatedWith(Names.named(JDBC_REGISTERED_CLASSES)).toInstance(registeredClasses);
+        bind(new MapTypeLiteral()).annotatedWith(Names.named(JDBC_REGISTERED_CLASSES)).toInstance(registeredClasses);
 
         expose(Connection.class);
-        expose(new TypeLiteral<Map<Class<?>, String>>() {}).annotatedWith(Names.named(JDBC_REGISTERED_CLASSES));
+        expose(new MapTypeLiteral()).annotatedWith(Names.named(JDBC_REGISTERED_CLASSES));
     }
 
     private void bindDataSource(DataSourceDefinition definition,  JdbcConnectionLink jdbcLink) {
@@ -61,5 +61,8 @@ class JdbcModule extends PrivateModule {
 
         expose(JdbcExceptionHandler.class).annotatedWith(dataSourceQualifier);
         expose(JdbcTransactionHandler.class).annotatedWith(dataSourceQualifier);
+    }
+
+    private static class MapTypeLiteral extends TypeLiteral<Map<Class<?>, String>> {
     }
 }

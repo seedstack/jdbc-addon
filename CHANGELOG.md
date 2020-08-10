@@ -1,3 +1,7 @@
+# Version 3.0.3 (2020-08-10)
+
+* [chg] Update for Seed 3.10+ 
+
 # Version 3.0.2 (2017-07-31)
 
 * [chg] Improved error message when no data source is specified.

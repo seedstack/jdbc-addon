@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013-2016, The SeedStack authors <http://seedstack.org>
+/*
+ * Copyright © 2013-2020, The SeedStack authors <http://seedstack.org>
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@ package org.seedstack.jdbc.internal.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.seedstack.jdbc.internal.JdbcErrorCode;
 import org.seedstack.jdbc.spi.DataSourceProvider;
 import org.seedstack.seed.SeedException;
@@ -29,7 +30,9 @@ public class HikariDataSourceProvider implements DataSourceProvider {
         HikariConfig hikariConfig = getHikariConfig(driverClassName, url);
         hikariConfig.setDriverClassName(driverClassName);
         hikariConfig.setJdbcUrl(url);
-        hikariConfig.setDataSourceProperties(dataSourceProperties);
+        if (dataSourceProperties != null) {
+            hikariConfig.setDataSourceProperties(dataSourceProperties);
+        }
         if (user != null) {
             hikariConfig.setUsername(user);
         }
@@ -42,12 +45,15 @@ public class HikariDataSourceProvider implements DataSourceProvider {
     @Override
     public void close(DataSource dataSource) {
         try {
-            ((HikariDataSource) dataSource).close();
+            if (dataSource instanceof HikariDataSource) {
+                ((HikariDataSource) dataSource).close();
+            }
         } catch (Exception e) {
             LOGGER.warn("Unable to close datasource", e);
         }
     }
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "false positive due to try with resources")
     private HikariConfig getHikariConfig(String driverClassName, String url) {
         HikariConfig hikariConfig = null;
 
